@@ -19,12 +19,12 @@ namespace BingPic
 {
 	public partial class Form1 : Form
 	{
-		string url0 = "http://cn.bing.com/";
-		string url = "http://cn.bing.com/HPImageArchive.aspx?format=js&idx=-1&n=30";// ConfigurationSettings.AppSettings.GetValues("url").ToString();
+		static string url0 = "http://cn.bing.com/";
+		static string url = "http://cn.bing.com/HPImageArchive.aspx?format=js&idx=-1&n=30";// ConfigurationSettings.AppSettings.GetValues("url").ToString();
 		[System.Runtime.InteropServices.DllImport("user32.dll", EntryPoint = "SystemParametersInfo")]
 		public static extern int SystemParametersInfo(int uAction, int uParam, string lpvParam, int fuWinIni);
 		Thread threadOfSetDeskBackGround = new Thread(SetDeskBackGround);
-
+		Thread threadOfDownloadWallpaperToDisk = new Thread(DownloadWallpaperToDisk);
 		public Form1()
 		{
 			InitializeComponent();
@@ -41,13 +41,18 @@ namespace BingPic
 				if (!threadOfSetDeskBackGround.IsAlive)
 				{
 					threadOfSetDeskBackGround.Start();
-					SaveWallpaperToDisk();
+
 				}
-			  
+				if (!threadOfDownloadWallpaperToDisk.IsAlive)
+				{
+					threadOfDownloadWallpaperToDisk.Start();
+
+				}
+			 
 				 
 		}
 
-		public List<ImageInfo> GetUrls()
+		public static List<ImageInfo> GetUrls()
 		{
 			List<ImageInfo> list = new List<ImageInfo> { };
 			try
@@ -73,7 +78,7 @@ namespace BingPic
 			}
 			return list;
 		}
-		public string GetPostInfo(string url)
+		public static string GetPostInfo(string url)
 		{
 			string strBuff = "";
 			try
@@ -98,42 +103,55 @@ namespace BingPic
 			return strBuff;
 		}
 
+		public static void SaveWallpaperToDisk() {
 
-		public  void SaveWallpaperToDisk()
-		{ //要保存的路径，路径不存在可以使用下面的Directory.CreateDirectory(path)生成文件夹 
+			//要保存的路径，路径不存在可以使用下面的Directory.CreateDirectory(path)生成文件夹 
 			string ImageSavePath = @"C:\Users\Long\Pictures\BingWallpaper"; //保存墙纸路径 
-			Bitmap bmpWallpaper;
+		    Bitmap bmpWallpaper;
+		    List<ImageInfo> list = GetUrls();
+		    if (list.Count != 0)
+		    {
+		    	try
+		    	{
+		    		foreach (var item in list)
+		    		{
+		    			WebRequest webreq = WebRequest.Create(item.Url.ToString());
+		    			WebResponse webres = webreq.GetResponse();
+		    			using (Stream stream = webres.GetResponseStream())
+		    			{
+		    				bmpWallpaper = (Bitmap)Image.FromStream(stream);
+		    				if (!Directory.Exists(ImageSavePath))
+		    				{
+		    					Directory.CreateDirectory(ImageSavePath);
+		    				}
+		    				//设置文件名为例：bing2017816.jpg
+		    				//图片保存路径为相对路径，保存在程序的目录下 
+		    
+		    				bmpWallpaper.Save(ImageSavePath + "\\Bing" + item.Startdate.ToString() + ".jpg", ImageFormat.Jpeg);
+		    
+		    			} //保存图片代码到此为止，下面就是
+		    		}//foreach
+		    	}//try
+		    	catch (Exception e)
+		    	{
+		    		e.ToString();
+		    	}
+		    }//if		    		    
+		}
+		public static void DownloadWallpaperToDisk()
+		{
+			//要保存的路径，路径不存在可以使用下面的Directory.CreateDirectory(path)生成文件夹 
 			string  path = @"C:\Users\Long\Pictures\BingWallpaper";
-			if (File.Exists(path + "\\Bing" + DateTime.Today.ToString("yyyyMMdd").ToString() + ".jpg"))
-				return;
-			List<ImageInfo> list = GetUrls();
-			if (list.Count != 0) {
-				try
+			while (true)
+			{
+				if (!File.Exists(path + "\\Bing" + DateTime.Today.ToString("yyyyMMdd").ToString() + ".jpg"))
+					SaveWallpaperToDisk();
+				else
 				{
-					foreach (var item in list)
-					{
-						WebRequest webreq = WebRequest.Create(item.Url.ToString());
-						WebResponse webres = webreq.GetResponse();
-						using (Stream stream = webres.GetResponseStream())
-						{
-							bmpWallpaper = (Bitmap)Image.FromStream(stream);
-							if (!Directory.Exists(ImageSavePath))
-							{
-								Directory.CreateDirectory(ImageSavePath);
-							}
-							//设置文件名为例：bing2017816.jpg
-							//图片保存路径为相对路径，保存在程序的目录下 
-
-							bmpWallpaper.Save(ImageSavePath + "\\Bing" + item.Startdate.ToString() + ".jpg", ImageFormat.Jpeg);
-
-						} //保存图片代码到此为止，下面就是
-					}//foreach
-				}//try
-				catch (Exception e)
-				{
-					e.ToString();
-				}
-			}//if
+					
+				}//else
+				Thread.Sleep(6000);//
+			}//while
 		}
 
 		public  static void SetDeskBackGround()
