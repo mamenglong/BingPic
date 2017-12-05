@@ -17,7 +17,7 @@ namespace BingPic
 			Application.EnableVisualStyles();
 			Application.SetCompatibleTextRenderingDefault(false);
 			Form1 form1 = new Form1();
-			Application.Run();
+			Application.Run(form1);
 		}
 	}
 }
