@@ -28,11 +28,13 @@ namespace BingPic
 		public Form1()
 		{
 			InitializeComponent();
-			this.label_Version_Value.Text = "V" + ConfigurationManager.AppSettings["sysVersion"].ToString();
 			Start();
 		}
 
-	    /**开始切换保存壁纸*/
+		private void button1_Click(object sender, EventArgs e)
+		{
+			Start();
+		}
 		public void Start() {
 
 			
@@ -48,26 +50,8 @@ namespace BingPic
 				}
 			this.Hide();
 		}
-		/**停止*/
-		public void Stop()
-		{
 
-
-			if (threadOfSetDeskBackGround.IsAlive)
-			{
-				threadOfSetDeskBackGround.Abort();
-
-			}
-			if (threadOfDownloadWallpaperToDisk.IsAlive)
-			{
-				threadOfDownloadWallpaperToDisk.Abort();
-
-			}
-			
-		}
-
-		/**获取近一周的图片url**/
-		public static List<ImageInfo> GetUrls(string thisistest)
+		public static List<ImageInfo> GetUrls()
 		{
 			List<ImageInfo> list = new List<ImageInfo> { };
 			try
@@ -89,42 +73,6 @@ namespace BingPic
 				}
 			}
 			catch (Exception e) {
-				e.ToString();
-			}
-			return list;
-		}
-
-		/**获取近8天的图片url**/
-		public static List<ImageInfo> GetUrls()
-		{
-			List<ImageInfo> list = new List<ImageInfo> { };
-			try
-			{
-				StringBuilder sburl = new StringBuilder();
-				for (int count = -1; count < 29; count++)
-				{//循环30次
-					sburl.Append("http://cn.bing.com/HPImageArchive.aspx?format=js&idx=");
-					sburl.Append(count+"&n=1");
-					string postContent = GetPostInfo(sburl.ToString());
-
-					JObject jo = (JObject)JsonConvert.DeserializeObject(postContent);
-					//获取第一个json数组
-					JArray jArray = JArray.Parse(jo["images"].ToString());
-					string[] urls = new string[jArray.Count];
-					foreach (var item in jArray)
-					{
-						ImageInfo imageInfo = new ImageInfo();
-						imageInfo.Url = url0 + item["url"].ToString();
-						imageInfo.Startdate = item["startdate"].ToString();
-						imageInfo.Copyright = item["copyright"].ToString();
-						list.Add(imageInfo);
-						//urls[count++] = url0 + item["url"].ToString();
-					}
-					sburl.Clear();
-				}
-			}
-			catch (Exception e)
-			{
 				e.ToString();
 			}
 			return list;
@@ -248,14 +196,14 @@ namespace BingPic
 		{
 			this.Hide();                      //隐藏窗体	
 		}
-		/***显示窗体**/
+
 		private void show_toolStripMenuItem_Click(object sender, EventArgs e)
 		{
 			this.Show();                                //窗体显示
 			this.WindowState = FormWindowState.Normal;  //窗体状态默认大小
 			this.Activate();                            //激活窗体给予焦点
 		}
-		/***退出程序**/
+
 		private void exit_toolStripMenuItem_Click(object sender, EventArgs e)
 		{
 			//点击"是(YES)"退出程序
@@ -278,7 +226,7 @@ namespace BingPic
 				Application.Exit();            //关闭应用程序窗体
 			}
 		}
-		/***点击图标显示**/
+
 		private void Bing_notifyIcon_MouseClick(object sender, MouseEventArgs e)
 		{
 			//点击鼠标"左键"发生
@@ -288,14 +236,6 @@ namespace BingPic
 				this.WindowState = FormWindowState.Normal;  //窗体默认大小
 				this.Bing_notifyIcon.Visible = true;            //设置图标可见
 			}
-		}
-		private void button_Start_Click(object sender, EventArgs e)
-		{
-			Start();
-		}
-		private void button_Stop_Click(object sender, EventArgs e)
-		{
-			Stop();
 		}
 	}
 }
