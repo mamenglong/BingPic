@@ -137,7 +137,7 @@
 			this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
 			this.MaximizeBox = false;
 			this.Name = "Form1";
-			this.Text = "Form1";
+			this.Text = "Bing壁纸";
 			this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.Form1_FormClosing);
 			this.notifyIcon_contextMenuStrip.ResumeLayout(false);
 			this.ResumeLayout(false);

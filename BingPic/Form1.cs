@@ -20,7 +20,9 @@ namespace BingPic
 	public partial class Form1 : Form
 	{
 		static string url0 = "http://cn.bing.com/";
-		static string url = "http://cn.bing.com/HPImageArchive.aspx?format=js&idx=-1&n=30";// ConfigurationSettings.AppSettings.GetValues("url").ToString();
+		static string[] url = { "http://cn.bing.com/HPImageArchive.aspx?format=js&idx=-1&n=8","http://cn.bing.com/HPImageArchive.aspx?format=js&idx=7&n=8" };//前8天 ConfigurationSettings.AppSettings.GetValues("url").ToString();
+		//static string url2 =;//后八天
+		static string ImageSavePath = @"C:\Users\Long\Pictures\BingWallpaper"; //保存墙纸路径 
 		[System.Runtime.InteropServices.DllImport("user32.dll", EntryPoint = "SystemParametersInfo")]
 		public static extern int SystemParametersInfo(int uAction, int uParam, string lpvParam, int fuWinIni);
 		Thread threadOfSetDeskBackGround = new Thread(SetDeskBackGround);
@@ -66,26 +68,28 @@ namespace BingPic
 			
 		}
 
-		/**获取近一周的图片url**/
-		public static List<ImageInfo> GetUrls(string thisistest)
+		/**获取近16的图片url**/
+		public static List<ImageInfo> GetUrls()
 		{
 			List<ImageInfo> list = new List<ImageInfo> { };
 			try
 			{
-				string postContent = GetPostInfo(url);
-
-				JObject jo = (JObject)JsonConvert.DeserializeObject(postContent);
-				//获取第一个json数组
-				JArray jArray = JArray.Parse(jo["images"].ToString());
-				string[] urls = new string[jArray.Count];
-				foreach (var item in jArray)
+				foreach (string ur in url)
 				{
-					ImageInfo imageInfo = new ImageInfo();
-					imageInfo.Url = url0 + item["url"].ToString();
-					imageInfo.Startdate = item["startdate"].ToString();
-					imageInfo.Copyright = item["copyright"].ToString();
-					list.Add(imageInfo);
-					//urls[count++] = url0 + item["url"].ToString();
+					string postContent = GetPostInfo(ur);
+					JObject jo = (JObject)JsonConvert.DeserializeObject(postContent);
+					//获取第一个json数组
+					JArray jArray = JArray.Parse(jo["images"].ToString());
+					string[] urls = new string[jArray.Count];
+					foreach (var item in jArray)
+					{
+						ImageInfo imageInfo = new ImageInfo();
+						imageInfo.Url = url0 + item["url"].ToString();
+						imageInfo.Startdate = item["startdate"].ToString();
+						imageInfo.Copyright = item["copyright"].ToString();
+						list.Add(imageInfo);
+						//urls[count++] = url0 + item["url"].ToString();
+					}
 				}
 			}
 			catch (Exception e) {
@@ -94,8 +98,8 @@ namespace BingPic
 			return list;
 		}
 
-		/**获取近8天的图片url**/
-		public static List<ImageInfo> GetUrls()
+		/**获取近16天的图片url**/
+		public static List<ImageInfo> GetUrls(string thisistest)
 		{
 			List<ImageInfo> list = new List<ImageInfo> { };
 			try
@@ -157,7 +161,7 @@ namespace BingPic
 		public static void SaveWallpaperToDisk() {
 
 			//要保存的路径，路径不存在可以使用下面的Directory.CreateDirectory(path)生成文件夹 
-			string ImageSavePath = @"C:\Users\Long\Pictures\BingWallpaper"; //保存墙纸路径 
+			//string ImageSavePath = @"C:\Users\Long\Pictures\BingWallpaper"; //保存墙纸路径 
 		    Bitmap bmpWallpaper;
 		    List<ImageInfo> list = GetUrls();
 		    if (list.Count != 0)
@@ -166,6 +170,11 @@ namespace BingPic
 		    	{
 		    		foreach (var item in list)
 		    		{
+						string fileName = ImageSavePath + "\\Bing" + item.Startdate.ToString() + ".jpg";
+						if (FileExists(fileName))//文件存在跳过
+						{
+							continue;
+						}
 		    			WebRequest webreq = WebRequest.Create(item.Url.ToString());
 		    			WebResponse webres = webreq.GetResponse();
 		    			using (Stream stream = webres.GetResponseStream())
@@ -178,7 +187,7 @@ namespace BingPic
 		    				//设置文件名为例：bing2017816.jpg
 		    				//图片保存路径为相对路径，保存在程序的目录下 
 		    
-		    				bmpWallpaper.Save(ImageSavePath + "\\Bing" + item.Startdate.ToString() + ".jpg", ImageFormat.Jpeg);
+		    				bmpWallpaper.Save(fileName, ImageFormat.Jpeg);
 		    
 		    			} //保存图片代码到此为止，下面就是
 		    		}//foreach
@@ -192,10 +201,10 @@ namespace BingPic
 		public static void DownloadWallpaperToDisk()
 		{
 			//要保存的路径，路径不存在可以使用下面的Directory.CreateDirectory(path)生成文件夹 
-			string  path = @"C:\Users\Long\Pictures\BingWallpaper";
+			//string  path = @"C:\Users\Long\Pictures\BingWallpaper";
 			while (true)
 			{
-				if (!File.Exists(path + "\\Bing" + DateTime.Today.ToString("yyyyMMdd").ToString() + ".jpg"))
+				if (!File.Exists( ImageSavePath+ "\\Bing" + DateTime.Today.ToString("yyyyMMdd").ToString() + ".jpg"))
 					SaveWallpaperToDisk();
 				else
 				{
@@ -221,7 +230,7 @@ namespace BingPic
 	
 		public static string [] GetFilePath()
 		{
-			string ImageSavePath = @"C:\Users\Long\Pictures\BingWallpaper";//保存图片位置
+			//string ImageSavePath = @"C:\Users\Long\Pictures\BingWallpaper";//保存图片位置
 			DirectoryInfo folder = new DirectoryInfo(ImageSavePath);
 			StringBuilder stringBuilder = new StringBuilder();
 			foreach (FileInfo file in folder.GetFiles("*.jpg"))
@@ -231,6 +240,16 @@ namespace BingPic
 			string[] url = stringBuilder.ToString().Split(',');
 			return url;
 
+		}
+
+		public static Boolean FileExists(string file)
+		{
+			if (  File.Exists(file))
+			{
+				return true;
+			}
+			else
+				return false;
 		}
 
 
