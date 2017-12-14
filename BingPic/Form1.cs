@@ -22,7 +22,7 @@ namespace BingPic
 		static string url0 = "http://cn.bing.com/";
 		static string[] url = { "http://cn.bing.com/HPImageArchive.aspx?format=js&idx=-1&n=8","http://cn.bing.com/HPImageArchive.aspx?format=js&idx=7&n=8" };//前8天 ConfigurationSettings.AppSettings.GetValues("url").ToString();
 		//static string url2 =;//后八天
-		static string ImageSavePath = @"C:\Users\Long\Pictures\BingWallpaper"; //保存墙纸路径 
+		static string ImageSavePath = @"C:\Users\"+ System.Environment.UserName+@"\Pictures\BingWallpaper"; //保存墙纸路径 
 		[System.Runtime.InteropServices.DllImport("user32.dll", EntryPoint = "SystemParametersInfo")]
 		public static extern int SystemParametersInfo(int uAction, int uParam, string lpvParam, int fuWinIni);
 		Thread threadOfSetDeskBackGround = new Thread(SetDeskBackGround);
@@ -36,8 +36,9 @@ namespace BingPic
 
 	    /**开始切换保存壁纸*/
 		public void Start() {
+			//string n = System.Environment.MachineName;
 
-			
+			//	string userName=System.Environment.UserName;
 				if (!threadOfSetDeskBackGround.IsAlive)
 				{
 					threadOfSetDeskBackGround.Start();
@@ -221,6 +222,8 @@ namespace BingPic
 			while (true)
 			{
 				string[] URL = GetFilePath();
+				if (URL.Length == 0||URL==null)
+					return;
 				//Random random = new Random(DateTime.Now.Day);
 				int i = new Random().Next(0, URL.Length-1);
 				SystemParametersInfo(20, 1,URL[i], 1);
@@ -231,13 +234,16 @@ namespace BingPic
 		public static string [] GetFilePath()
 		{
 			//string ImageSavePath = @"C:\Users\Long\Pictures\BingWallpaper";//保存图片位置
+			string[] url;
+			if (!Directory.Exists(ImageSavePath))
+				return null;
 			DirectoryInfo folder = new DirectoryInfo(ImageSavePath);
 			StringBuilder stringBuilder = new StringBuilder();
 			foreach (FileInfo file in folder.GetFiles("*.jpg"))
 			{
 				stringBuilder.Append(file.FullName + ",");
 			}
-			string[] url = stringBuilder.ToString().Split(',');
+			 url= stringBuilder.ToString().Split(',');
 			return url;
 
 		}
