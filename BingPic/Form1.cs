@@ -244,7 +244,7 @@ namespace BingPic
 				}
 				catch (Exception e1)
 				{
-					LogWrite("设置壁纸 ：" + e1.ToString());
+					LogWrite("time="+ ConfigurationManager.AppSettings["changeTime"].ToString() + "设置壁纸 ：" + e1.ToString());
 				}
 			}
 		}
