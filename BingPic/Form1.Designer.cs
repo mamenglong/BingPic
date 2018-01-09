@@ -37,6 +37,7 @@
 			this.hide_toolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			this.show_toolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			this.exit_toolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+			this.changeTime_toolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			this.label_Version = new System.Windows.Forms.Label();
 			this.label_Version_Value = new System.Windows.Forms.Label();
 			this.button_Stop = new System.Windows.Forms.Button();
@@ -46,7 +47,7 @@
 			// button_Start
 			// 
 			this.button_Start.AutoSize = true;
-			this.button_Start.Location = new System.Drawing.Point(25, 75);
+			this.button_Start.Location = new System.Drawing.Point(35, 75);
 			this.button_Start.Name = "button_Start";
 			this.button_Start.Size = new System.Drawing.Size(98, 51);
 			this.button_Start.TabIndex = 0;
@@ -72,31 +73,39 @@
 			this.notifyIcon_contextMenuStrip.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.hide_toolStripMenuItem,
             this.show_toolStripMenuItem,
+            this.changeTime_toolStripMenuItem,
             this.exit_toolStripMenuItem});
 			this.notifyIcon_contextMenuStrip.Name = "notifyIcon_contextMenuStrip";
-			this.notifyIcon_contextMenuStrip.Size = new System.Drawing.Size(125, 70);
+			this.notifyIcon_contextMenuStrip.Size = new System.Drawing.Size(153, 114);
 			// 
 			// hide_toolStripMenuItem
 			// 
 			this.hide_toolStripMenuItem.Name = "hide_toolStripMenuItem";
-			this.hide_toolStripMenuItem.Size = new System.Drawing.Size(124, 22);
+			this.hide_toolStripMenuItem.Size = new System.Drawing.Size(152, 22);
 			this.hide_toolStripMenuItem.Text = "隐藏界面";
 			this.hide_toolStripMenuItem.Click += new System.EventHandler(this.hide_toolStripMenuItem_Click);
 			// 
 			// show_toolStripMenuItem
 			// 
 			this.show_toolStripMenuItem.Name = "show_toolStripMenuItem";
-			this.show_toolStripMenuItem.Size = new System.Drawing.Size(124, 22);
+			this.show_toolStripMenuItem.Size = new System.Drawing.Size(152, 22);
 			this.show_toolStripMenuItem.Text = "显示界面";
 			this.show_toolStripMenuItem.Click += new System.EventHandler(this.show_toolStripMenuItem_Click);
 			// 
 			// exit_toolStripMenuItem
 			// 
 			this.exit_toolStripMenuItem.Name = "exit_toolStripMenuItem";
-			this.exit_toolStripMenuItem.Size = new System.Drawing.Size(124, 22);
+			this.exit_toolStripMenuItem.Size = new System.Drawing.Size(152, 22);
 			this.exit_toolStripMenuItem.Text = "退出程序";
 			this.exit_toolStripMenuItem.TextDirection = System.Windows.Forms.ToolStripTextDirection.Horizontal;
 			this.exit_toolStripMenuItem.Click += new System.EventHandler(this.exit_toolStripMenuItem_Click);
+			// 
+			// changeTime_toolStripMenuItem
+			// 
+			this.changeTime_toolStripMenuItem.Name = "changeTime_toolStripMenuItem";
+			this.changeTime_toolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+			this.changeTime_toolStripMenuItem.Text = "设置切换时间";
+			this.changeTime_toolStripMenuItem.Click += new System.EventHandler(this.changeTime_toolStripMenuItem_Click);
 			// 
 			// label_Version
 			// 
@@ -117,7 +126,7 @@
 			// 
 			// button_Stop
 			// 
-			this.button_Stop.Location = new System.Drawing.Point(145, 75);
+			this.button_Stop.Location = new System.Drawing.Point(186, 75);
 			this.button_Stop.Name = "button_Stop";
 			this.button_Stop.Size = new System.Drawing.Size(100, 51);
 			this.button_Stop.TabIndex = 3;
@@ -157,6 +166,7 @@
 		private System.Windows.Forms.Label label_Version;
 		private System.Windows.Forms.Label label_Version_Value;
 		private System.Windows.Forms.Button button_Stop;
+		private System.Windows.Forms.ToolStripMenuItem changeTime_toolStripMenuItem;
 	}
 }
 
